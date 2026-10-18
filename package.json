@@ -1,0 +1,25 @@
+{
+  "name": "pixel-turf",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:web\"",
+    "dev:server": "npm run dev --workspace=apps/server",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --build",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.4.5",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "vitest": "^1.5.0"
+  }
+}
