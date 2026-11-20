@@ -10,7 +10,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: CLIENT_ORIGIN
-        sync: false
+        value: https://pixel-turf-teal.vercel.app
       - key: JWT_SECRET
         generateValue: true
       - key: COOKIE_SECURE

@@ -10,10 +10,14 @@ const optionalUrl = z
   .transform((v) => (v ? v : undefined))
   .pipe(z.string().url().optional());
 
+const DEFAULT_PROD_CLIENT_ORIGIN = "https://pixel-turf-teal.vercel.app";
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z.coerce.number().default(4000),
-  CLIENT_ORIGIN: z.string().default("http://localhost:5173"),
+  CLIENT_ORIGIN: z
+    .string()
+    .default(`http://localhost:5173,${DEFAULT_PROD_CLIENT_ORIGIN}`),
   MONGODB_URI: optionalUrl,
   REDIS_URL: optionalUrl,
   JWT_SECRET: z.string().min(10).default("pixel-turf-default-jwt-secret"),
@@ -25,12 +29,18 @@ const envSchema = z.object({
 
 const rawEnv = envSchema.parse(process.env);
 
-const CLIENT_ORIGINS = rawEnv.CLIENT_ORIGIN.split(",")
+const parsedOrigins = rawEnv.CLIENT_ORIGIN.split(",")
   .map((origin) => origin.trim().replace(/\/+$/, ""))
   .filter(Boolean);
 
+const CLIENT_ORIGINS = Array.from(
+  new Set([
+    ...(parsedOrigins.length > 0 ? parsedOrigins : ["http://localhost:5173"]),
+    DEFAULT_PROD_CLIENT_ORIGIN,
+  ])
+);
+
 export const env = {
   ...rawEnv,
-  CLIENT_ORIGINS:
-    CLIENT_ORIGINS.length > 0 ? CLIENT_ORIGINS : ["http://localhost:5173"],
+  CLIENT_ORIGINS,
 };
