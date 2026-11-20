@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "env": {
+    "VITE_SERVER_URL": "https://pixelturf.onrender.com"
+  },
   "rewrites": [
     {
       "source": "/(.*)",

@@ -27,7 +27,12 @@ export function getPlayerId(): string {
   return id;
 }
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL?.trim() || undefined;
+const DEFAULT_PROD_SERVER_URL = "https://pixelturf.onrender.com";
+
+const rawServerUrl = import.meta.env.VITE_SERVER_URL?.trim();
+const SERVER_URL =
+  (rawServerUrl ? rawServerUrl.replace(/\/+$/, "") : undefined) ??
+  (import.meta.env.PROD ? DEFAULT_PROD_SERVER_URL : undefined);
 
 export const socket = io(SERVER_URL, {
   withCredentials: true,
