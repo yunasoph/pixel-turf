@@ -13,12 +13,18 @@ const logger = pino({
 });
 
 async function bootstrap() {
-  try {
-    await mongoose.connect(env.MONGODB_URI);
-    logger.info("✅ Connected to MongoDB Atlas");
-  } catch (err) {
-    logger.error(err, "❌ Failed to connect to MongoDB");
-    process.exit(1);
+  if (env.MONGODB_URI) {
+    try {
+      await mongoose.connect(env.MONGODB_URI);
+      logger.info("✅ Connected to MongoDB Atlas");
+    } catch (err) {
+      logger.warn(
+        err,
+        "⚠️ Failed to connect to MongoDB; continuing with in-memory rooms"
+      );
+    }
+  } else {
+    logger.info("ℹ️ MONGODB_URI not set; running with in-memory rooms");
   }
 
   const app = express();
@@ -26,12 +32,12 @@ async function bootstrap() {
 
   const io = new Server(httpServer, {
     cors: {
-      origin: env.CLIENT_ORIGIN,
+      origin: env.CLIENT_ORIGINS,
       credentials: true,
     },
   });
 
-  app.use(cors({ origin: env.CLIENT_ORIGIN, credentials: true }));
+  app.use(cors({ origin: env.CLIENT_ORIGINS, credentials: true }));
   app.use(express.json());
   app.use(cookieParser());
 

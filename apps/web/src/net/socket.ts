@@ -27,7 +27,9 @@ export function getPlayerId(): string {
   return id;
 }
 
-export const socket = io({
+const SERVER_URL = import.meta.env.VITE_SERVER_URL?.trim() || undefined;
+
+export const socket = io(SERVER_URL, {
   withCredentials: true,
   auth: {
     playerId: getPlayerId(),
